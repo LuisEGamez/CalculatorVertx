@@ -1,0 +1,43 @@
+openapi: 3.0.3
+info:
+  version: "1.0.0"
+  title: Calculator-API
+  description: This application sums two numbers
+paths:
+  /api/calculadora/suma:
+    post:
+      tags:
+        - Operations
+      operationId: sum
+      parameters:
+        - name: number1
+          in: query
+          required: true
+          schema:
+            type: number
+            example: 1
+        - name: number1
+          in: query
+          required: true
+          schema:
+            type: number
+            example: 2
+
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultado:
+                    type: string
+                    example: "3"
+        '404':
+          description: Request not found
+          content:
+            application/json:
+              schema:
+                type: string
+                example: {"message":"Error 404, Page not found"}
