@@ -2,6 +2,7 @@ package com.calculadora.Calculadora;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.openapi.RouterBuilder;
@@ -10,15 +11,10 @@ import io.vertx.ext.web.validation.ValidationHandler;
 
 public class MainVerticle extends AbstractVerticle {
 
-  private final Calculator calculator;
-
-  public MainVerticle() {
-    super();
-    this.calculator = new Calculator();
-  }
+  private final Calculator calculator = new Calculator();
 
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
+  public void start() throws Exception {
 
     RouterBuilder.create(vertx, "calculator.yaml")
       .onSuccess(routerBuilder -> {
@@ -41,16 +37,12 @@ public class MainVerticle extends AbstractVerticle {
     if(number1 == null || number2 == null){
       routingContext.response().setStatusCode(400).end();
     }else {
-      Integer number1AsInteger = Integer.valueOf(number1);
-      Integer number2AsInteger = Integer.valueOf(number2);
-      calculator.sum(number1AsInteger, number2AsInteger);
-      routingContext.response()
-        .setStatusCode(200)
-        .putHeader("content-type", "text-plain")
-        .end("Operacion: " + number1 + " + " + number2 + " = " + calculator.getResult());
+      calculator.sum(number1, number2);
+      routingContext.json(calculator);
     }
 
   }
+
 
 
 }

@@ -1,5 +1,8 @@
 package com.calculadora.Calculadora;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
+@JsonPropertyOrder
 public class Calculator {
 
   private int result;

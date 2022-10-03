@@ -4,8 +4,8 @@ info:
   title: Calculator-API
   description: This application sums two numbers
 paths:
-  /api/calculadora/suma:
-    post:
+  /api/calculator/suma:
+    get:
       tags:
         - Operations
       operationId: sum
@@ -22,7 +22,6 @@ paths:
           schema:
             type: number
             example: 2
-
       responses:
         '200':
           description: Successful response
@@ -34,10 +33,3 @@ paths:
                   resultado:
                     type: string
                     example: "3"
-        '404':
-          description: Request not found
-          content:
-            application/json:
-              schema:
-                type: string
-                example: {"message":"Error 404, Page not found"}
