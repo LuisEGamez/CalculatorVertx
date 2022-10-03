@@ -16,7 +16,7 @@ paths:
           schema:
             type: number
             example: 1
-        - name: number1
+        - name: number2
           in: query
           required: true
           schema:
