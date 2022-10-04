@@ -5,7 +5,7 @@ info:
   description: This application sums two numbers
 paths:
   /api/calculator/sum:
-    get:
+    post:
       tags:
         - Operations
       operationId: sum
@@ -33,6 +33,30 @@ paths:
                   resultado:
                     type: string
                     example: "3"
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              example: Bad Request
+  /api/calculator/results:
+    get:
+      operationId: getResults
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    result:
+                      type: number
+                      example: 4.2
+
         '400':
           description: Bad request
           content:
