@@ -37,6 +37,10 @@
 
   <dependencies>
     <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+    </dependency>
+    <dependency>
       <groupId>io.vertx</groupId>
       <artifactId>vertx-web</artifactId>
     </dependency>
@@ -88,7 +92,7 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <release>11</release>
+          <release>17</release>
         </configuration>
       </plugin>
       <plugin>
