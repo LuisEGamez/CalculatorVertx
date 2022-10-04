@@ -4,7 +4,7 @@ info:
   title: Calculator-API
   description: This application sums two numbers
 paths:
-  /api/calculator/suma:
+  /api/calculator/sum:
     get:
       tags:
         - Operations

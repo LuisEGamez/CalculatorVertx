@@ -1,4 +1,4 @@
-package com.calculadora.Calculadora;
+package com.calculator;
 
 import io.vertx.core.Vertx;
 import io.vertx.junit5.VertxExtension;
