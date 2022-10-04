@@ -33,3 +33,8 @@ paths:
                   resultado:
                     type: string
                     example: "3"
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              example: Bad Request
