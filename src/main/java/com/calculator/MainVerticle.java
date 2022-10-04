@@ -1,6 +1,7 @@
 package com.calculator;
 
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.openapi.RouterBuilder;
@@ -11,7 +12,11 @@ import io.vertx.mysqlclient.MySQLConnectOptions;
 import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MainVerticle extends AbstractVerticle {
+
 
   @Override
   public void start() throws Exception {
@@ -23,11 +28,10 @@ public class MainVerticle extends AbstractVerticle {
       .setUser("root")
       .setPassword("root");
 
-    // Pool options
     PoolOptions poolOptions = new PoolOptions()
       .setMaxSize(5);
 
-    // Create the client pool
+
     SqlClient client = MySQLPool.client(vertx, connectOptions, poolOptions);
 
 
@@ -55,10 +59,10 @@ public class MainVerticle extends AbstractVerticle {
       .preparedQuery("SELECT * FROM results;")
       .execute( ar -> {
         if (ar.succeeded()) {
+          List<ResultDTO> resultDTOS = new ArrayList<>();
           RowSet<Row> rows = ar.result();
-          System.out.println(rows.toString());
-          rows.forEach(row -> System.out.println("Id: " + row.getInteger(0) + " Result: " + row.getDouble(1)));
-          routerBuilder.response().end();
+          rows.forEach(row -> resultDTOS.add(new ResultDTO(row.getInteger(0), row.getDouble(1), row.getLocalDateTime(2).toString())));
+          routerBuilder.response().end(Json.encode(resultDTOS));
         } else {
           System.out.println("Failure: " + ar.cause().getMessage());
         }
@@ -76,10 +80,10 @@ public class MainVerticle extends AbstractVerticle {
 
     double resultado = Calculator.sum(number1, number2);
     ResultDTO resultadoDTO = new ResultDTO(resultado);
-    routingContext.json(resultadoDTO);
+    routingContext.response().end("Result: " + resultadoDTO.getResult());
 
     client
-      .preparedQuery( "CREATE TABLE IF NOT EXISTS `calculator`.`results` (`id` INT NOT NULL AUTO_INCREMENT,`result` DOUBLE NULL, PRIMARY KEY (`id`));")
+      .preparedQuery("CREATE TABLE IF NOT EXISTS results (`id` INT NOT NULL AUTO_INCREMENT, `result` DOUBLE NULL, `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`));")
       .execute(ar -> {
         if(ar.succeeded()){
           RowSet<Row> rows = ar.result();
@@ -88,20 +92,21 @@ public class MainVerticle extends AbstractVerticle {
           }else {
             System.out.println("Table created");
           }
+          client
+            .preparedQuery("INSERT INTO results (result) VALUES (?)")
+            .execute(Tuple.of(resultadoDTO.getResult()), ar1 -> {
+              if (ar1.succeeded()) {
+                System.out.println("Result inserted");
+              } else {
+                System.out.println("Failure: " + ar1.cause().getMessage());
+              }
+            });
         }else {
           System.out.println(ar.cause().getMessage());
         }
       });
 
-    client
-      .preparedQuery("INSERT INTO results (result) VALUES (?)")
-      .execute(Tuple.of(resultadoDTO.getResult()), ar -> {
-        if (ar.succeeded()) {
-          System.out.println("Result inserted");
-        } else {
-          System.out.println("Failure: " + ar.cause().getMessage());
-        }
-      });
+
   }
 
 
