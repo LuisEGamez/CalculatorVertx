@@ -2,7 +2,7 @@ package com.calculator;
 
 public abstract class Calculator {
 
-  public static Integer sum(int number1, int number2){
+  public static Double sum(double number1, double number2){
     return number1 + number2;
   }
 }

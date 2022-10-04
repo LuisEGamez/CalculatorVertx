@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder
 public class ResultDTO {
-  private Integer result;
+  private Double result;
 
-  public ResultDTO(Integer result) {
+  public ResultDTO(Double result) {
     this.result = result;
   }
 
-  public Integer getResult() {
+  public Double getResult() {
     return result;
   }
 }

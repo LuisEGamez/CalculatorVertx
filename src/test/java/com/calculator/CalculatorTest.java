@@ -11,14 +11,14 @@ public class CalculatorTest {
   @Test
   void suma(){
 
-    int expectedResult = Calculator.sum(3, 3);
+    double expectedResult = Calculator.sum(3, 3);
     assertThat(expectedResult).isEqualTo(6);
   }
 
   @Test
   void sumaFail(){
 
-    int expectedResult = Calculator.sum(3, 3);
+    double expectedResult = Calculator.sum(3, 3);
     assertThat(expectedResult).isNotEqualTo(4);
   }
 }
