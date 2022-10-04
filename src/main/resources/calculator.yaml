@@ -57,3 +57,23 @@ paths:
           content:
             text/plain:
               example: Bad Request
+  /api/calculator/results/delete/{resultId}:
+    delete:
+      operationId: deleteResults
+      parameters:
+        - name: resultId
+          in: path
+          description: ID of result
+          required: true
+          schema:
+            type: integer
+
+      responses:
+        '204':
+          description: No content response
+
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              example: Bad Request

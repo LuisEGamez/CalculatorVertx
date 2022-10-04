@@ -34,11 +34,14 @@ public class MainVerticle extends AbstractVerticle {
 
     SqlClient client = MySQLPool.client(vertx, connectOptions, poolOptions);
 
+    createTable(client);
+
 
     RouterBuilder.create(vertx, "calculator.yaml")
       .onSuccess(routerBuilder -> {
         routerBuilder.operation("sum").handler(routingContext1 -> sum(routingContext1, client));
-        routerBuilder.operation("getResults").handler(routerBuilder1 -> getAllResult(routerBuilder1, client));
+        routerBuilder.operation("getResults").handler(routingContext1 -> getAllResult(routingContext1, client));
+        routerBuilder.operation("deleteResults").handler(routingContext1 -> deleteResult(routingContext1, client));
 
         Router router = routerBuilder.createRouter();
         router.errorHandler(400, routingContext -> {
@@ -50,6 +53,23 @@ public class MainVerticle extends AbstractVerticle {
         vertx.createHttpServer()
           .requestHandler(router)
           .listen(8080);
+      });
+
+  }
+
+  private void deleteResult(RoutingContext routingContext1, SqlClient client) {
+
+    String resultId = routingContext1.pathParam("resultId");
+
+    client
+      .preparedQuery("DELETE FROM results WHERE id=?;")
+      .execute(Tuple.of(resultId), ar -> {
+        if (ar.succeeded()) {
+          System.out.println("Result deleted");
+          routingContext1.response().setStatusCode(204).end();
+        } else {
+          System.out.println("Failure: " + ar.cause().getMessage());
+        }
       });
 
   }
@@ -82,6 +102,24 @@ public class MainVerticle extends AbstractVerticle {
     ResultDTO resultadoDTO = new ResultDTO(resultado);
     routingContext.response().end("Result: " + resultadoDTO.getResult());
 
+    insertResult(client, resultadoDTO);
+
+
+  }
+
+  private void insertResult(SqlClient client, ResultDTO resultadoDTO) {
+    client
+      .preparedQuery("INSERT INTO results (result) VALUES (?)")
+      .execute(Tuple.of(resultadoDTO.getResult()), ar1 -> {
+        if (ar1.succeeded()) {
+          System.out.println("Result inserted");
+        } else {
+          System.out.println("Failure: " + ar1.cause().getMessage());
+        }
+      });
+  }
+
+  private void createTable(SqlClient client) {
     client
       .preparedQuery("CREATE TABLE IF NOT EXISTS results (`id` INT NOT NULL AUTO_INCREMENT, `result` DOUBLE NULL, `date` TIMESTAMP DEFAULT CURRENT_TIMESTAMP, PRIMARY KEY (`id`));")
       .execute(ar -> {
@@ -92,21 +130,10 @@ public class MainVerticle extends AbstractVerticle {
           }else {
             System.out.println("Table created");
           }
-          client
-            .preparedQuery("INSERT INTO results (result) VALUES (?)")
-            .execute(Tuple.of(resultadoDTO.getResult()), ar1 -> {
-              if (ar1.succeeded()) {
-                System.out.println("Result inserted");
-              } else {
-                System.out.println("Failure: " + ar1.cause().getMessage());
-              }
-            });
         }else {
           System.out.println(ar.cause().getMessage());
         }
       });
-
-
   }
 
 
